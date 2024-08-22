@@ -1,3 +1,4 @@
+
 const musicContainer = document.querySelector('.music-container');
 const playBtn = document.querySelector('#play');
 const prevBtn = document.querySelector('#prev');
@@ -7,6 +8,10 @@ const progress = document.querySelector('.progress');
 const progressContainer = document.querySelector('.progress-container');
 const title = document.querySelector('#title');
 const cover = document.querySelector('#cover');
+const speedBtn = document.querySelector('#speed-btn');
+const muteBtn = document.querySelector('#mute');
+
+let isMuted = false;
 
 // Song titles
 const songs = [
@@ -23,6 +28,10 @@ let songIndex = 4;
 
 // Initially load songs into DOM
 loadSong(songs[songIndex]);
+
+// an array of playback speeds
+const speeds = [1, 1.25, 1.5, 1.75, 2];
+let currentSpeedIndex = 0;
 
 // Update song details
 function loadSong(song) {
@@ -68,6 +77,19 @@ function nextSong() {
     playSong();
 }
 
+function changePlaybackSpeed() {
+    currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
+    audio.playbackRate = speeds[currentSpeedIndex];
+    speedBtn.innerText = `${speeds[currentSpeedIndex]}x`;
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    muteBtn.querySelector('i').classList.toggle('fa-volume-up', !isMuted);
+    muteBtn.querySelector('i').classList.toggle('fa-volume-mute', isMuted);
+}
+
 function updateProgress(e) {
     const { duration, currentTime } =  e.srcElement;
     const progressPercent = (currentTime / duration) * 100;
@@ -102,3 +124,7 @@ audio.addEventListener('timeupdate', updateProgress)
 progressContainer.addEventListener('click', setProgress)
 
 audio.addEventListener('ended', nextSong)
+
+speedBtn.addEventListener('click', changePlaybackSpeed);
+
+muteBtn.addEventListener('click', toggleMute);
